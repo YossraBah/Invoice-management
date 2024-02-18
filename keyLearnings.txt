@@ -1,0 +1,75 @@
+*******fonts are downloaded with other static assets at build time wich reduces network requests to get font files and prevent layout shift./next/font/google
+*******using Image component will increase performance automatically by:
+* Preventing layout shift | * src width height alt : are required when images are remote(its a way to khow how to resize it), priority placeholder="blur"
+* Resizing images | * Lazy loading images by defaultLazy : loading images by default
+*******the layout component isn't rerendered : on navigation, only the page components update while the layout won't re-render. This is called partial rendering
+*******<Link /> Component : link between pages in your application without refresh.
+Next.js automatically prefetches the code for the linked route in the background. By the time the user clicks the link, the code for the destination page will
+already be loaded in the background, and this is what makes the page transition near-instant!
+*******Splitting code by routes means that pages become isolated. If a certain page throws an error, the rest of the application will still work.
+*******{ usePathname } from 'next/navigation' returns the segment url we are in without the domain name '/dashboard' for example.
+*******Fetching Data : 
+client component : API's (route handlers to create apis endpoints : route.ts) or use third-party apis.
+server component : fetch data directly on the server thanks to async/await components. =>
+we can skip the API layer, and query the database directly without risking exposing our database secrets to the client.
+
+Server Components support promises, providing a simpler solution for asynchronous tasks like data fetching. You can use async/await syntax without reaching out for useEffect, useState or data fetching libraries.
+Server Components execute on the server, so you can keep expensive data fetches and logic on the server and only send the result to the client.
+As mentioned before, since Server Components execute on the server, you can query the database directly without an additional API layer.
+
+1-The data requests are unintentionally blocking each other, creating a request waterfall. to avoid it we can use Parallel data fetching by using Promise.all()
+2-By default, Next.js prerenders routes to improve performance, this is called Static Rendering. So if your data changes, it won't be reflected in your dashboard.
+1-A "waterfall" refers to a sequence of network requests that depend on the completion of previous requests. In the case of data fetching, each request can only begin once the previous request has returned data.
+2- 
+
+With static rendering, data fetching and rendering happens on the server at build time (when you deploy) or during revalidation. The result can then be distributed and cached in a Content Delivery Network (CDN)
+
+Whenever a user visits your application, the cached result is served. There are a couple of benefits of static rendering:
+
+Faster Websites - Prerendered content can be cached and globally distributed. This ensures that users around the world can access your website's content more quickly and reliably.
+Reduced Server Load - Because the content is cached, your server does not have to dynamically generate content for each user request.
+SEO - Prerendered content is easier for search engine crawlers to index, as the content is already available when the page loads. This can lead to improved search engine rankings.
+Static rendering is useful for UI with no data or data that is shared across users, such as a static blog post or a product page. It might not be a good fit for a dashboard that has personalized data that is regularly updated.
+
+With dynamic rendering, content is rendered on the server for each user at request time (when the user visits the page). There are a couple of benefits of dynamic rendering:
+
+Real-Time Data - Dynamic rendering allows your application to display real-time or frequently updated data. This is ideal for applications where data changes often.
+User-Specific Content - It's easier to serve personalized content, such as dashboards or user profiles, and update the data based on user interaction.
+Request Time Information - Dynamic rendering allows you to access information that can only be known at request time, such as cookies or the URL search parameters.
+
+with server side components we have 3 rendering strategies static (default), dynamic and streaming  
+With Static Rendering, routes are rendered at build time, or in the background after data revalidation. The result is cached and can be pushed to a Content Delivery Network (CDN). This optimization allows you to share the result of the rendering work between users and server requests.
+With Dynamic Rendering, routes are rendered for each user at request time.
+=> as developpers we do not have to worry about wether we should be using static or dynamic rendering of our server component as 
+nextjs khnows what is best for performance according to what we are using in our component like searchParams prop (dynamic functions(cookies()), caching data)
+and Whenever needed he switches us to dynamic rendering.
+
+PS : With dynamic rendering, your application is only as fast as your slowest data fetch. //solution = streaming
+
+Streaming is a data transfer technique that allows you to break down a route into smaller "chunks" and progressively stream
+them from the server to the client as they become ready.
+=> By streaming, you can prevent slow data requests from blocking your whole page. This allows the user to see and interact
+with parts of the page without waiting for all the data to load before any UI can be shown to the user.
+
+we can steram by using the loading.tsx file But, instead, we can be more granular and stream specific components using React Suspense.
+
+*******Partial Prerendering:
+The fallback is embedded into the initial static file along with other static content. At build time (or during revalidation), the static parts of the route are prerendered, and the rest is postponed until the user requests the route.
+It's worth noting that wrapping a component in Suspense doesn't make the component itself dynamic (remember you used unstable_noStore to achieve this behavior), but rather Suspense is used as a boundary between the static and dynamic parts of your route.
+
+
+we can import client components into server component this is because the server component will know that it has a client component
+and will only render the html for the server component and let the client part render on the client but, we can't do the opposite
+(import server component into client component instead we can pass server component as props or children to a client component )
+
+*******Data fetching : 
+1-on server with fetch() : React extends fetch to automatically memoize fetch requests while rendering a React component tree. PS : in Route handlers, fetch requests are not memoized as Route Handlers are not part of the React component tree.
+revalidation  : If you have multiple fetch requests in a statically rendered route, and each has a different revalidation frequency. The lowest time will be used for all requests. For dynamically rendered routes, each fetch request will be revalidated independently.
+2-on server with 3-rd-party : Whether the data is cached or not will depend on whether the route segment is statically or dynamically rendered. If the segment is static (default), the output of the request will be cached and revalidated as part of the route segment. If the segment is dynamic, the output of the request will not be cached and will be re-fetched on every request when the segment is rendered.
+3-Fetching Data on the Client with Route Handlers. =>Route Handlers execute on the server and return the data to the client.
+4-Fetching Data on the Client with third-party libraries : tanstackQuery reactQuery ...
+
+*******Server actions and mutations : require 'use server' directive to mark the function as function
+there are inline and module ,in client component we can only use module approach, in server we can use both:
+inline : async function(){'use server' + rest of code}  || module : 'use server' at the top of actions.ts and we export actions there
+we can also pass a Server Action to a Client Component as a prop.
