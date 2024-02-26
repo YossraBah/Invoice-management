@@ -6,6 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
       disallow: '/private/',
-    }
+    },
+    sitemap: 'https://invoice-management-dashboard.vercel.app/sitemap.xml',
   }
 }
