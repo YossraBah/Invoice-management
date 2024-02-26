@@ -33,4 +33,19 @@ PS: we only have one user in our database which you can use : user@nextmail.com 
 
 ![image](https://github.com/YossraBah/Invoice-management/assets/100873601/e2a7ef91-082b-4cf0-bcf9-ba8f1585dcd8)
 
+### Customers Page 
+
+![image](https://github.com/YossraBah/Invoice-management/assets/100873601/fe61ed0e-618a-45d3-a20a-334bc6164245)
+
+#### Create Customer && Edit Invoice
+
+![image](https://github.com/YossraBah/Invoice-management/assets/100873601/3d8b0294-7c71-4599-8222-183b5c2b9b1b)
+
+
+#### Search Feature 
+
+![image](https://github.com/YossraBah/Invoice-management/assets/100873601/ada3ea7d-6953-4b53-8ae6-6c72273376d3)
+
+
+
 
