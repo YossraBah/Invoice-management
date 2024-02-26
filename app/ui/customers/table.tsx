@@ -6,12 +6,16 @@ import {
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
 import { CreateCustomer, DeleteCustomer, UpdateCustomer } from './buttons';
+import { fetchFilterdCustomers } from '@/app/lib/data';
 
 export default async function CustomersTable({
-  customers,
+  query,
+  currentPage
 }: {
-  customers: FormattedCustomersTable[];
+  query: string;
+  currentPage: number;
 }) {
+  const customers = await fetchFilterdCustomers(query, currentPage);
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
